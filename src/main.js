@@ -14,47 +14,47 @@ const toggleLoader = () => {
   loaderEl.classList.toggle('is-hidden');
 };
 
-const onSearchFormSubmit = event => {
-  event.preventDefault();
-  const searchedValue = searchFormEl.elements.user_query.value.trim();
-  if (searchedValue === '') {
-    return;
+const showError = message => {
+  iziToast.error({
+    message: message,
+    position: 'topRight',
+    maxWidth: 400,
+  });
+};
+
+const onSearchFormSubmit = async event => {
+  try {
+    event.preventDefault();
+    const searchedValue = searchFormEl.elements.user_query.value.trim();
+    if (searchedValue === '') {
+      return;
+    }
+    galleryEl.innerHTML = '';
+    toggleLoader();
+
+    const response = await fetchImages(searchedValue);
+
+    if (response.data.hits.length === 0) {
+      showError(
+        'Sorry, there are no images matching your search query. Please try again!'
+      );
+      return;
+    }
+
+    const galleryMarkup = response.data.hits
+      .map(imgDetails => createGalleryCard(imgDetails))
+      .join('');
+
+    galleryEl.innerHTML = galleryMarkup;
+
+    lightbox.refresh();
+    searchFormEl.reset();
+  } catch (error) {
+    console.log(error);
+    showError(`${error}`);
+  } finally {
+    toggleLoader();
   }
-
-  galleryEl.innerHTML = '';
-
-  toggleLoader();
-
-  fetchImages(searchedValue)
-    .then(data => {
-      toggleLoader();
-
-      if (data.hits.length === 0) {
-        iziToast.error({
-          message:
-            'Sorry, there are no images matching your search query. Please try again!',
-          position: 'topRight',
-        });
-        return;
-      }
-
-      const galleryMarkup = data.hits
-        .map(imgDetails => createGalleryCard(imgDetails))
-        .join('');
-
-      galleryEl.innerHTML = galleryMarkup;
-
-      lightbox.refresh();
-      searchFormEl.reset();
-    })
-    .catch(error => {
-      toggleLoader();
-      console.log(error);
-      iziToast.error({
-        message: `${error}`,
-        position: 'topRight',
-      });
-    });
 };
 
 searchFormEl.addEventListener('submit', onSearchFormSubmit);
