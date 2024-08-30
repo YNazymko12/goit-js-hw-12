@@ -17,6 +17,5 @@ export const fetchImages = (searchedQuery, currentPage, perPage) => {
     },
   };
 
-  console.log('Fetching images with params:', axiosOptions.params);
   return axios.get('', axiosOptions);
 };
