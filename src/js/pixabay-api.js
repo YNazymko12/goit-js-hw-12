@@ -4,7 +4,7 @@ const PIXABAY_API_KEY = '40905423-24d24966a8b04fca12252a818';
 
 axios.defaults.baseURL = 'https://pixabay.com/api/';
 
-export const fetchImages = searchedQuery => {
+export const fetchImages = (searchedQuery, currentPage, perPage) => {
   const axiosOptions = {
     params: {
       key: PIXABAY_API_KEY,
@@ -12,9 +12,11 @@ export const fetchImages = searchedQuery => {
       image_type: 'photo',
       orientation: 'horizontal',
       safesearch: true,
-      per_page: 24,
+      page: currentPage,
+      per_page: perPage,
     },
   };
 
+  console.log('Fetching images with params:', axiosOptions.params);
   return axios.get('', axiosOptions);
 };
