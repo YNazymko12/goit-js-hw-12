@@ -102,6 +102,7 @@ const onLoadMoreBtnClick = async event => {
     galleryEl.insertAdjacentHTML('beforeend', galleryMarkup);
 
     smoothScrollByHeight();
+    lightbox.refresh();
 
     const totalPages = Math.ceil(response.data.totalHits / perPage);
     if (currentPage < totalPages) {
